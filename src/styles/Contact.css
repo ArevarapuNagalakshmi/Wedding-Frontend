@@ -1,0 +1,111 @@
+/* ===============================
+   MODERN CONTACT PAGE
+================================= */
+
+.contact-wrapper {
+  min-height: calc(100vh - 70px);
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 20px; /* Improved spacing */
+}
+
+/* Card */
+.contact-container {
+  background: white;
+  padding: 50px 45px; /* Better spacing */
+  border-radius: 14px;
+  width: 100%;
+  max-width: 520px;
+  border: 1px solid grey;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  transition: 0.3s ease;
+}
+
+.contact-container:hover {
+  transform: translateY(-4px);
+}
+
+/* Title */
+.contact-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: rgb(6,115,130);
+  font-weight: 700;
+  font-size: 26px;
+}
+
+/* Inputs */
+.contact-container input,
+.contact-container textarea {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 22px;
+  border-radius: 8px;
+  border: 1px solid grey;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s ease;
+}
+
+.contact-container input:focus,
+.contact-container textarea:focus {
+  border-color: rgb(247,134,24);
+  box-shadow: 0 0 0 2px rgba(247,134,24,0.15);
+}
+
+/* Success message */
+.contact-success {
+  background-color: white;
+  border: 1px solid grey;
+  color: rgb(6,115,130);
+  padding: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  border-radius: 6px;
+}
+
+/* ===============================
+   MODERN FULL ROUNDED BUTTON
+================================= */
+
+.send-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: rgb(247,134,24);
+  color: white;
+  border: 1px solid grey;
+  border-radius: 50px; /* 🔥 Fully rounded */
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+/* Hover Animation */
+.send-btn:hover {
+  background-color: #FDB750;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(253, 183, 80, 0.3);
+}
+
+/* Click animation */
+.send-btn:active {
+  transform: scale(0.98);
+}
+
+/* Icon animation */
+.btn-icon {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.send-btn:hover .btn-icon {
+  transform: translateX(4px);
+}

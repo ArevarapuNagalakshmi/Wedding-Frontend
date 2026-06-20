@@ -1,0 +1,80 @@
+/* ==========================
+   GLOBAL RESET
+========================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+}
+
+/* background helper classes used by toggle */
+body.bg-normal {
+  background-color: #f4f6f8;
+}
+
+body.bg-white {
+  background-color: #ffffff;
+}
+
+/* ==========================
+   APP LAYOUT
+========================== */
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Main content grows */
+.app-content {
+  flex: 1;
+  background: #f4f6f8;
+}
+
+.app-content.bg-normal {
+  background: #f4f6f8;
+}
+
+.app-content.bg-white {
+  background: #ffffff;
+}
+
+.main-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Optional page sidebar layout support */
+.page-with-sidebar {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.sidebar-panel {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 24px;
+  box-shadow: 0 18px 48px rgba(15, 41, 51, 0.08);
+}
+
+@media (max-width: 960px) {
+  .page-with-sidebar {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Optional container spacing */
+.container {
+  max-width: 1200px;
+  margin: auto;
+}

@@ -1,0 +1,39 @@
+.vendorapproval-container {
+
+  padding: 30px;
+
+  background: white;
+
+}
+
+/* HEADER */
+.vendorapproval-header h2 {
+
+  color: rgb(6,115,130);
+
+  margin-bottom: 6px;
+
+}
+
+.vendorapproval-header p {
+
+  color: grey;
+
+  margin-bottom: 20px;
+
+}
+
+/* ERROR */
+.vendorapproval-error {
+
+  background: rgb(247,134,24);
+
+  color: white;
+
+  padding: 10px;
+
+  border-radius: 6px;
+
+  margin-bottom: 15px;
+
+}

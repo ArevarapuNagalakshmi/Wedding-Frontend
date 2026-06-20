@@ -1,0 +1,28 @@
+ Volume in drive E has no label.
+ Volume Serial Number is 5CDE-816B
+
+ Directory of e:\Projects\Wedding Project\wedding-frontend
+
+09-06-2026  17:09    <DIR>          .
+09-06-2026  10:25    <DIR>          ..
+09-02-2026  17:39               310 .gitignore
+25-05-2026  23:35             1,015 analyze_jsx.js
+09-06-2026  16:41    <DIR>          build
+25-05-2026  23:03               243 build-log.txt
+09-06-2026  16:39             1,152 build-output.txt
+21-05-2026  18:12               206 build.log
+22-05-2026  10:28             1,860 buildlog.txt
+09-06-2026  17:09                 0 build_check_async.txt
+28-05-2026  10:47               838 build_error_log.txt
+09-06-2026  16:41             1,152 build_error_log2.txt
+28-05-2026  10:47                44 build_output.log
+22-05-2026  16:35               920 build_output.txt
+25-05-2026  16:39    <DIR>          node_modules
+25-05-2026  16:39           661,117 package-lock.json
+22-05-2026  12:14             1,028 package.json
+25-05-2026  23:25               386 parse_service_list.js
+09-02-2026  18:04    <DIR>          public
+09-02-2026  17:39             3,359 README.md
+09-02-2026  18:30    <DIR>          src
+              15 File(s)        673,630 bytes
+               6 Dir(s)  300,909,318,144 bytes free

@@ -1,0 +1,98 @@
+.vendorlist-container {
+  padding: 30px;
+  background: white;
+}
+
+.vendorlist-title {
+  color: rgb(6,115,130);
+  margin-bottom: 20px;
+}
+
+/* TABLE */
+.vendorlist-table-wrapper {
+  overflow-x: auto;
+}
+
+.vendorlist-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid grey;
+}
+
+.vendorlist-table th {
+  background: rgb(6,115,130);
+  color: white;
+  padding: 12px;
+  text-align: left;
+}
+
+.vendorlist-table td {
+  padding: 12px;
+  border-top: 1px solid grey;
+}
+
+.vendorlist-table tr:hover {
+  background: #f9f9f9;
+}
+
+/* STATUS */
+.status-approved {
+  background: rgb(6,115,130);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.status-pending {
+  background: rgb(247,134,24);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* BUTTONS */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.approve-btn {
+  border: none;
+  background: rgb(6,115,130);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.approve-btn:hover {
+  background: #FDB750;
+  box-shadow: 0 4px 12px rgba(253, 183, 80, 0.3);
+}
+
+.reject-btn {
+  border: 1px solid grey;
+  background: white;
+  color: grey;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reject-btn:hover {
+  background: #FDB750;
+  color: white;
+  border-color: #FDB750;
+  box-shadow: 0 4px 12px rgba(253, 183, 80, 0.3);
+}
+
+/* NO DATA */
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: grey;
+}
