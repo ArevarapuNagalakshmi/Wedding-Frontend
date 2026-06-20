@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { searchServices } from "../../api/serviceApi";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../common/Loader";
+import Sidebar from "../common/Sidebar";
 import { CartContext } from "../../context/CartContext";
 import CustomerHeader from "./CustomerHeader";
 
@@ -211,19 +212,25 @@ const ServiceList = () => {
   };
 
   return (
-    <div className="service-list-page">
-      <CustomerHeader title="Services" />
-      <section className="dashboard-grid customer-dashboard-grid service-quick-actions">
-        {quickActions.map((action) => (
-          <div className="dashboard-card action-card" key={action.title}>
-            <h3>{action.title}</h3>
-            <p>{action.description}</p>
-            <Link to={action.to} className="btn btn-outline dashboard-card-action">
-              {action.button}
-            </Link>
-          </div>
-        ))}
-      </section>
+    <div className="service-list-page page-with-sidebar">
+      <Sidebar
+        title="Quick Actions"
+        links={quickActions.map((a) => ({ label: a.title, description: a.description, to: a.to }))}
+      />
+
+      <div className="page-main">
+        <CustomerHeader title="Services" />
+        <section className="dashboard-grid customer-dashboard-grid service-quick-actions">
+          {quickActions.map((action) => (
+            <div className="dashboard-card action-card" key={action.title}>
+              <h3>{action.title}</h3>
+              <p>{action.description}</p>
+              <Link to={action.to} className="btn btn-outline dashboard-card-action">
+                {action.button}
+              </Link>
+            </div>
+          ))}
+        </section>
       <div className="filter-panel">
         <div className="filter-row">
           <div className="filter-field">
@@ -297,7 +304,8 @@ const ServiceList = () => {
         </div>
       </div>
 
-      {renderServiceCards()}
+        {renderServiceCards()}
+      </div>
     </div>
   );
 };
