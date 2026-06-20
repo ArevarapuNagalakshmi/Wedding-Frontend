@@ -1,16 +1,29 @@
-/* Sidebar styles */
+/* Sidebar styles - trendy glassmorphism */
 .sidebar-panel {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 14px 36px rgba(15, 41, 51, 0.06);
-  min-width: 240px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(250,255,255,0.6));
+  backdrop-filter: blur(6px) saturate(120%);
+  -webkit-backdrop-filter: blur(6px) saturate(120%);
+  padding: 18px;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(15, 41, 51, 0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+  min-width: 260px;
+  border: 1px solid rgba(255,255,255,0.55);
+}
+
+.sidebar-trendy {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.sidebar-trendy:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 68px rgba(15,41,51,0.12);
 }
 
 .sidebar-header h3 {
-  margin: 0 0 12px 0;
-  font-size: 1.05rem;
-  color: #0f5c70;
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  color: #0d5660;
+  letter-spacing: 0.4px;
 }
 
 .sidebar-nav {
@@ -20,29 +33,58 @@
 }
 
 .sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   text-decoration: none;
-  color: #123a42;
+  color: #0a3a3f;
   padding: 10px 12px;
   border-radius: 12px;
-  transition: background 0.12s ease, transform 0.08s ease;
+  transition: background 160ms ease, transform 120ms ease, box-shadow 120ms ease;
 }
 
-.sidebar-link:hover {
-  background: #f0fbff;
-  transform: translateY(-2px);
+.sidebar-link-left {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(29,163,176,0.12), rgba(81,189,200,0.06));
+}
+
+.sidebar-icon {
+  color: #0f5c70;
+  font-size: 18px;
+}
+
+.sidebar-link-body {
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-link-title {
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 0.95rem;
 }
 
 .sidebar-link-desc {
-  font-size: 0.9rem;
-  color: rgba(18, 58, 66, 0.7);
+  font-size: 0.82rem;
+  color: rgba(10,58,63,0.7);
+}
+
+.sidebar-link:hover {
+  background: linear-gradient(90deg, rgba(237,252,255,0.8), rgba(245,255,255,0.85));
+  transform: translateY(-3px);
+}
+
+.sidebar-link.active {
+  background: linear-gradient(90deg, rgba(29,163,176,0.12), rgba(20,136,145,0.06));
+  box-shadow: 0 10px 30px rgba(15,92,112,0.06);
+  border-left: 4px solid #1da3b0;
 }
 
 .sidebar-children {
-  margin-top: 16px;
+  margin-top: 14px;
 }
 
 @media (max-width: 960px) {
