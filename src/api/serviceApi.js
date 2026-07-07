@@ -28,11 +28,16 @@ export const updateService = (serviceId, serviceData) => {
 
 export const deleteService = async (serviceId) => {
   try {
-    return await axiosInstance.delete(`/packages/${serviceId}`);
+    const response = await axiosInstance.delete(`/packages/${serviceId}`);
+    return response;
   } catch (err) {
-    // fallback: some backends expose services under /services/:id for deletion
+    // Try alternative endpoint if first one fails
     if (err.response && err.response.status === 404) {
-      return await axiosInstance.delete(`/services/${serviceId}`);
+      try {
+        return await axiosInstance.delete(`/services/${serviceId}`);
+      } catch (fallbackErr) {
+        throw fallbackErr;
+      }
     }
     throw err;
   }

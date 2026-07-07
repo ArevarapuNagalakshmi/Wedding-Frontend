@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState, useEffect } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FaUserCircle, FaBars, FaTimes, FaMoon, FaSun } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
@@ -11,8 +11,15 @@ const Navbar = ({ onToggleBg, normalBg }) => {
   const { token, role, logout } = useContext(AuthContext);
   const { cartCount } = useContext(CartContext);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+
   const currentRole = token && role ? role : "GUEST";
   const isVendorArea = currentRole === "VENDOR" && location.pathname.startsWith("/vendor");
+
+  useEffect(() => {
+    setMenuOpen(false);
+    setAccountOpen(false);
+  }, [location.pathname]);
 
   const navLinks = useMemo(() => {
     const baseLinks = [
@@ -50,63 +57,90 @@ const Navbar = ({ onToggleBg, normalBg }) => {
     return baseLinks;
   }, [currentRole]);
 
-  const handleLogout = () => {
+  const closeAll = () => {
     setMenuOpen(false);
+    setAccountOpen(false);
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
+    setAccountOpen(false);
+  };
+
+  const toggleAccountMenu = () => {
+    setAccountOpen((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    closeAll();
     logout();
     navigate("/login");
   };
 
-  const closeMenu = () => setMenuOpen(false);
-
   return (
     <header className={`navbar-container${isVendorArea ? " vendor-area" : ""}`}>
-      <div className="navbar-brand-group">
-        <Link to="/" className="navbar-brand" onClick={closeMenu}>
+      <div className="navbar-left">
+        <Link to="/" className="navbar-brand" onClick={closeAll}>
           <span className="navbar-logo">💍</span>
           <div className="navbar-brand-text">
             <span className="navbar-title">Plan-E Weddings</span>
-            <span className="navbar-subtitle">Modern planning hub</span>
+            <span className="navbar-subtitle">Event planning made easy</span>
           </div>
         </Link>
-
         <button
           className="navbar-burger"
           type="button"
-          onClick={() => setMenuOpen((prev) => !prev)}
-          aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+          aria-controls="primary-navigation"
+          aria-expanded={menuOpen}
+          aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+          onClick={toggleMenu}
         >
           {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
       </div>
 
-      <nav className={`navbar-links${menuOpen ? " open" : ""}`}>
-        {navLinks.map((link) => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            onClick={closeMenu}
-            className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
-          >
-            {link.label}
-          </NavLink>
-        ))}
+      <nav
+        id="primary-navigation"
+        className={`navbar-nav${menuOpen ? " open" : ""}`}
+        role="navigation"
+        aria-label="Primary navigation"
+      >
+        <div className="navbar-links">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              onClick={closeAll}
+              className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </div>
       </nav>
 
-      <div className="navbar-actions">
+      <div className="navbar-right">
         <button className="bg-toggle-button" onClick={onToggleBg} type="button">
-          {normalBg ? <FaMoon /> : <FaSun />} {normalBg ? "Night mode" : "Day mode"}
+          {normalBg ? <FaMoon /> : <FaSun />}
+          <span className="button-text">{normalBg ? "Night" : "Day"}</span>
         </button>
 
         {token && currentRole === "CUSTOMER" && (
-          <span className="nav-badge">🛍️ {cartCount} item{cartCount === 1 ? "" : "s"}</span>
+          <span className="nav-badge">🛍️ {cartCount}</span>
         )}
 
         {token ? (
           <div className="nav-account-dropdown">
-            <button className="nav-account-button" type="button">
+            <button
+              className="nav-account-button"
+              type="button"
+              aria-expanded={accountOpen}
+              aria-haspopup="true"
+              onClick={toggleAccountMenu}
+            >
               <FaUserCircle /> Account
             </button>
-            <div className="dropdown-menu dropdown-menu-right">
+            <div className={`dropdown-menu${accountOpen ? " open" : ""}`}>
               <Link
                 className="dropdown-item"
                 to={
@@ -116,7 +150,7 @@ const Navbar = ({ onToggleBg, normalBg }) => {
                     ? "/vendor/profile"
                     : "/customer"
                 }
-                onClick={closeMenu}
+                onClick={closeAll}
               >
                 My Dashboard
               </Link>
@@ -129,7 +163,7 @@ const Navbar = ({ onToggleBg, normalBg }) => {
                     ? "/vendor/profile"
                     : "/"
                 }
-                onClick={closeMenu}
+                onClick={closeAll}
               >
                 My Profile
               </Link>
@@ -140,10 +174,10 @@ const Navbar = ({ onToggleBg, normalBg }) => {
           </div>
         ) : (
           <div className="auth-actions">
-            <Link className="nav-button nav-secondary" to="/login" onClick={closeMenu}>
+            <Link className="nav-button nav-secondary" to="/login" onClick={closeAll}>
               Login
             </Link>
-            <Link className="nav-button nav-secondary" to="/register" onClick={closeMenu}>
+            <Link className="nav-button nav-secondary" to="/register" onClick={closeAll}>
               Register
             </Link>
           </div>

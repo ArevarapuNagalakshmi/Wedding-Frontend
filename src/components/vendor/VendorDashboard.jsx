@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/Dashboard.css";
+import "../../styles/EnhancedDashboard.css";
 import { getMyServices, deleteService } from "../../api/serviceApi";
 import { getVendorProfile } from "../../api/vendorApi";
 import Loader from "../common/Loader";
 
-// Simple inline calendar component
+// Enhanced interactive calendar component
 const SimpleCalendar = ({ value, onChange, bookedDates }) => {
   const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   const getFirstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
@@ -20,30 +21,41 @@ const SimpleCalendar = ({ value, onChange, bookedDates }) => {
 
   const isBooked = (day) => bookedDates.some(d => d.getDate() === day && d.getMonth() === value.getMonth() && d.getFullYear() === value.getFullYear());
   const isSelected = (day) => day === value.getDate();
+  const isToday = (day) => {
+    const today = new Date();
+    return day === today.getDate() && value.getMonth() === today.getMonth() && value.getFullYear() === today.getFullYear();
+  };
 
   return (
-    <div style={{ padding: "16px", background: "white", borderRadius: "12px", border: "1px solid #dce8ee" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-        <button onClick={prevMonth} style={{ border: "none", background: "transparent", cursor: "pointer" }}>←</button>
-        <h3 style={{ margin: "0", fontSize: "16px" }}>{value.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h3>
-        <button onClick={nextMonth} style={{ border: "none", background: "transparent", cursor: "pointer" }}>→</button>
+    <div className="enhanced-calendar">
+      <div className="calendar-header">
+        <button onClick={prevMonth} className="calendar-nav-btn">
+          <span>←</span>
+        </button>
+        <h3>{value.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h3>
+        <button onClick={nextMonth} className="calendar-nav-btn">
+          <span>→</span>
+        </button>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px" }}>
-        {["S", "M", "T", "W", "T", "F", "S"].map(d => <div key={d} style={{ textAlign: "center", fontWeight: "700", fontSize: "12px", color: "#0f4a5a", padding: "6px" }}>{d}</div>)}
+      <div className="calendar-legend">
+        <div className="legend-item">
+          <div className="legend-box today"></div>
+          <span>Today</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-box booked"></div>
+          <span>Booked</span>
+        </div>
+      </div>
+      <div className="calendar-grid">
+        {["S", "M", "T", "W", "T", "F", "S"].map(d => (
+          <div key={d} className="calendar-day-name">{d}</div>
+        ))}
         {days.map((day, idx) => (
           <div
             key={idx}
             onClick={() => day && onChange(new Date(value.getFullYear(), value.getMonth(), day))}
-            style={{
-              padding: "8px",
-              textAlign: "center",
-              borderRadius: "6px",
-              background: day ? (isBooked(day) ? "#1da3b0" : isSelected(day) ? "#e8f5f7" : "transparent") : "transparent",
-              color: day ? (isBooked(day) ? "white" : "#0f4a5a") : "transparent",
-              cursor: day ? "pointer" : "default",
-              fontSize: "13px",
-              fontWeight: isBooked(day) ? "700" : "normal"
-            }}
+            className={`calendar-day ${day ? "has-date" : ""} ${isBooked(day) ? "booked" : ""} ${isSelected(day) ? "selected" : ""} ${isToday(day) ? "today" : ""}`}
           >
             {day}
           </div>
@@ -51,7 +63,6 @@ const SimpleCalendar = ({ value, onChange, bookedDates }) => {
       </div>
     </div>
   );
-};
 
 const VendorDashboard = () => {
   const [vendor, setVendor] = useState(null);
@@ -384,14 +395,19 @@ const VendorDashboard = () => {
           <div className="panel-box panel-map">
             <div className="panel-heading">Event Locations Map</div>
             {mapQuery ? (
-              <div className="map-wrapper">
-                <iframe
-                  title="Event Locations"
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=13&output=embed`}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+              <div style={{ position: "relative" }}>
+                <div className="map-location-badge">
+                  {bookingsWithLocation.length > 0 ? `${bookingsWithLocation.length} Event${bookingsWithLocation.length > 1 ? 's' : ''}` : 'Your Location'}
+                </div>
+                <div className="map-wrapper">
+                  <iframe
+                    title="Event Locations"
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=13&output=embed`}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
               </div>
             ) : (
               <div className="no-bookings" style={{ padding: "18px 0" }}>

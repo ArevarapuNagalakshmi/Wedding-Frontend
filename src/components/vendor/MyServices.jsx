@@ -9,8 +9,9 @@ import VendorHeader from "./VendorHeader";
 const MyServices = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState(false);
+  const [deletingServiceId, setDeletingServiceId] = useState(null);
   const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
   const [vendor, setVendor] = useState(null);
 
   const fetchServices = async () => {
@@ -34,27 +35,49 @@ const MyServices = () => {
   }, []);
 
   const handleDelete = async (serviceId) => {
-    if (!window.confirm("Are you sure you want to delete this service?")) return;
+    if (!window.confirm("Are you sure you want to delete this service? This action cannot be undone.")) {
+      return;
+    }
 
     try {
-      setDeleting(true);
-      // Optimistically remove the service from UI to improve responsiveness
-      setServices((prev) => prev.filter((s) => (s.id || s._id) !== serviceId));
+      setDeletingServiceId(serviceId);
+      setError("");
+      setSuccessMsg("");
 
-      try {
-        await deleteService(serviceId);
-      } catch (err) {
-        // If deletion failed, re-fetch to restore state and show error
-        console.error("Error deleting service", err);
-        await fetchServices();
-        setError("Unable to delete the service. Please try again.");
-        return;
-      }
+      // Make the deletion request first
+      await deleteService(serviceId);
+
+      // Only remove from UI after successful deletion
+      setServices((prev) => prev.filter((s) => (s.id || s._id) !== serviceId));
+      
+      // Show success message
+      setSuccessMsg("Service deleted successfully!");
+      setTimeout(() => setSuccessMsg(""), 3000);
     } catch (err) {
-      console.error("Error deleting service", err);
-      setError("Unable to delete the service. Please try again.");
+      console.error("Error deleting service:", err);
+      
+      // Extract more specific error message
+      let errorMsg = "Unable to delete the service. Please try again.";
+      
+      if (err.response) {
+        if (err.response.status === 401) {
+          errorMsg = "Your session has expired. Please log in again.";
+        } else if (err.response.status === 403) {
+          errorMsg = "You do not have permission to delete this service.";
+        } else if (err.response.status === 404) {
+          errorMsg = "Service not found. It may have already been deleted.";
+        } else if (err.response.status === 409) {
+          errorMsg = "Cannot delete this service. It may be associated with active bookings.";
+        } else if (err.response.data?.message) {
+          errorMsg = err.response.data.message;
+        }
+      } else if (err.message) {
+        errorMsg = `Error: ${err.message}`;
+      }
+      
+      setError(errorMsg);
     } finally {
-      setDeleting(false);
+      setDeletingServiceId(null);
     }
   };
 
@@ -101,7 +124,8 @@ const MyServices = () => {
           </Link>
         </div>
 
-        {error && <div className="vendor-page-alert">{error}</div>}
+        {error && <div className="vendor-page-alert vendor-alert-error">{error}</div>}
+        {successMsg && <div className="vendor-page-alert vendor-alert-success">{successMsg}</div>}
 
         {services.length === 0 ? (
           <div className="service-empty-state">
@@ -138,10 +162,10 @@ const MyServices = () => {
                     </Link>
                     <button
                       className="btn btn-danger"
-                      disabled={deleting}
+                      disabled={deletingServiceId === serviceId}
                       onClick={() => handleDelete(serviceId)}
                     >
-                      {deleting ? "Deleting..." : "Delete"}
+                      {deletingServiceId === serviceId ? "Deleting..." : "Delete"}
                     </button>
                   </div>
                 </div>

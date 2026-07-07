@@ -12,6 +12,7 @@ const VendorDashboard = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [missingProfile, setMissingProfile] = useState(false);
 
   const loadDashboard = async () => {
     try {
@@ -23,7 +24,14 @@ const VendorDashboard = () => {
       setServices(servicesRes.data || []);
     } catch (err) {
       console.error("Unable to load vendor dashboard data", err);
-      setError("Unable to load vendor information. Please refresh the page.");
+      // If backend returns 404 (no profile yet), surface a clear CTA
+      const status = err?.response?.status;
+      if (status === 404) {
+        setMissingProfile(true);
+        setError("Vendor profile not found. Create your profile to get started.");
+      } else {
+        setError("Unable to load vendor information. Please refresh the page.");
+      }
     } finally {
       setLoading(false);
     }
@@ -44,6 +52,11 @@ const VendorDashboard = () => {
 
       <section className="vendor-main-card">
         {error && <div className="vendor-dashboard-alert">{error}</div>}
+        {missingProfile && (
+          <div style={{ marginTop: 12 }}>
+            <Link to="/vendor/profile" className="btn btn-primary">Create Vendor Profile</Link>
+          </div>
+        )}
 
         <div className="vendor-main-card-inner">
           <div className="main-card-left">
