@@ -1,0 +1,25 @@
+.planning-page {
+  padding: 48px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.planning-hero {
+  background: linear-gradient(90deg,#fdf5f0,#f5fafd);
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 8px 30px rgba(16,42,56,0.06);
+  margin-bottom: 28px;
+}
+
+.planning-hero h1 { margin: 0 0 8px; color: #0f3b3f; }
+.planning-hero p { margin: 0; color: #356b6e; }
+
+.planning-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 18px; }
+.plan-card { background: white; padding: 18px; border-radius: 12px; box-shadow: 0 8px 26px rgba(16,42,56,0.06); }
+.plan-card h3 { margin: 0 0 6px; color: #0f3b3f; }
+.plan-card p { margin: 0; color: #516a6b; }
+
+@media (max-width: 640px) {
+  .planning-page { padding: 20px 12px; }
+}

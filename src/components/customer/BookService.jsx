@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { bookService } from "../../api/bookingApi";
 import { useNavigate, useParams } from "react-router-dom";
-import CustomerHeader from "./CustomerHeader";
+import CustomerPageLayout from "./CustomerPageLayout";
 
 const BookService = () => {
   const { serviceId } = useParams();
@@ -29,10 +29,13 @@ const BookService = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <CustomerHeader title="Book Service" />
-      <h3>Book Service</h3>
-      <form onSubmit={handleSubmit}>
+    <CustomerPageLayout
+      title="Book Service"
+      className="customer-book-service-page"
+    >
+      <div className="container mt-4">
+        <h3>Book Service</h3>
+        <form onSubmit={handleSubmit}>
         <input
           type="date"
           className="form-control mb-3"
@@ -48,7 +51,8 @@ const BookService = () => {
         />
         <button className="btn btn-success">Confirm Booking</button>
       </form>
-    </div>
+      </div>
+    </CustomerPageLayout>
   );
 };
 

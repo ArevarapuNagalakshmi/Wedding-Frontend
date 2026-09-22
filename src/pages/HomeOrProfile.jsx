@@ -22,6 +22,7 @@ const HomeOrProfile = () => {
     } else if (role === "VENDOR") {
       navigate("/vendor", { replace: true });
     } else if (role === "CUSTOMER") {
+      // Customers should land on their customer home/dashboard
       navigate("/customer", { replace: true });
     } else {
       navigate("/", { replace: true });

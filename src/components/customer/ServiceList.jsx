@@ -1,15 +1,255 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { searchServices } from "../../api/serviceApi";
-import { Link, useNavigate } from "react-router-dom";
+import { getVendorById } from "../../api/vendorApi";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Loader from "../common/Loader";
-import Sidebar from "../common/Sidebar";
 import { CartContext } from "../../context/CartContext";
-import CustomerHeader from "./CustomerHeader";
+import CustomerPageLayout from "./CustomerPageLayout";
+import "../../styles/ServiceList.css";
+
+const fallbackServiceSamples = {
+  Photography: [
+    {
+      id: "fallback-photography-1",
+      vendorName: "Rahul Photography",
+      packageName: "Wedding Photography Package",
+      experience: "6 Years",
+      city: "Hyderabad",
+      rating: "4.8",
+      price: 15000,
+      description: "Full-day coverage with premium editing and wedding album support.",
+    },
+    {
+      id: "fallback-photography-2",
+      vendorName: "Sai Digital Studio",
+      packageName: "Premium Couple Shoot",
+      experience: "8 Years",
+      city: "Vijayawada",
+      rating: "4.9",
+      price: 20000,
+      description: "Cinematic storytelling with multiple locations, pre-wedding and wedding day coverage.",
+    },
+    {
+      id: "fallback-photography-3",
+      vendorName: "Priya Lens",
+      packageName: "Deluxe Wedding Photography",
+      experience: "7 Years",
+      city: "Bangalore",
+      rating: "4.7",
+      price: 18000,
+      description: "Artistic wedding photography with candid moments and high-end portrait delivery.",
+    },
+    {
+      id: "fallback-photography-4",
+      vendorName: "Nikhil Memories",
+      packageName: "Complete Wedding Coverage",
+      experience: "5 Years",
+      city: "Chennai",
+      rating: "4.6",
+      price: 16000,
+      description: "Customized photography packages with drone shots and highlight reels.",
+    },
+  ],
+  Videography: [
+    {
+      id: "fallback-videography-1",
+      vendorName: "Frame Wave Films",
+      packageName: "Cinematic Wedding Film",
+      experience: "7 Years",
+      city: "Hyderabad",
+      rating: "4.8",
+      price: 22000,
+      description: "Cinematic wedding film with drone coverage and highlight trailers.",
+    },
+    {
+      id: "fallback-videography-2",
+      vendorName: "Lens & Motion",
+      packageName: "Full Event Videography",
+      experience: "6 Years",
+      city: "Vijayawada",
+      rating: "4.7",
+      price: 20000,
+      description: "Multi-camera coverage for ceremonies, receptions, and pre-wedding shoots.",
+    },
+  ],
+  Catering: [
+    {
+      id: "fallback-catering-1",
+      vendorName: "Silver Spoon Caterers",
+      packageName: "Deluxe Wedding Menu",
+      experience: "10 Years",
+      city: "Hyderabad",
+      rating: "4.9",
+      price: 45000,
+      description: "Multi-cuisine wedding catering with live counters and premium desserts.",
+    },
+    {
+      id: "fallback-catering-2",
+      vendorName: "Banquet Bites",
+      packageName: "Royal Feast Package",
+      experience: "8 Years",
+      city: "Vijayawada",
+      rating: "4.7",
+      price: 42000,
+      description: "Customized wedding catering with plated service, buffet, and healthy options.",
+    },
+  ],
+  Decoration: [
+    {
+      id: "fallback-decoration-1",
+      vendorName: "Floral Fantasy",
+      packageName: "Premium Wedding Decor",
+      experience: "9 Years",
+      city: "Hyderabad",
+      rating: "4.8",
+      price: 30000,
+      description: "Luxury floral and stage decoration with personalized themes and lighting.",
+    },
+    {
+      id: "fallback-decoration-2",
+      vendorName: "Elite Events",
+      packageName: "Venue Styling Package",
+      experience: "7 Years",
+      city: "Vijayawada",
+      rating: "4.6",
+      price: 28000,
+      description: "Stylish wedding decor for ceremony and reception spaces with premium props.",
+    },
+  ],
+  "Wedding Venue": [
+    {
+      id: "fallback-venue-1",
+      vendorName: "Royal Banquets",
+      packageName: "Grand Venue Booking",
+      experience: "12 Years",
+      city: "Hyderabad",
+      rating: "4.9",
+      price: 60000,
+      description: "Spacious banquet hall with premium catering and guest parking included.",
+    },
+    {
+      id: "fallback-venue-2",
+      vendorName: "Garden Greens",
+      packageName: "Outdoor Venue Package",
+      experience: "8 Years",
+      city: "Vijayawada",
+      rating: "4.8",
+      price: 55000,
+      description: "Scenic outdoor wedding venue with garden seating, lighting, and decor support.",
+    },
+  ],
+  "Makeup Artist": [
+    {
+      id: "fallback-makeup-1",
+      vendorName: "Glamour Artistry",
+      packageName: "Bridal Makeup",
+      experience: "6 Years",
+      city: "Hyderabad",
+      rating: "4.8",
+      price: 12000,
+      description: "Bridal makeup with trial session, touch-ups, and skincare prep.",
+    },
+    {
+      id: "fallback-makeup-2",
+      vendorName: "Beauty Bliss",
+      packageName: "Full Bridal Styling",
+      experience: "7 Years",
+      city: "Vijayawada",
+      rating: "4.7",
+      price: 14000,
+      description: "Complete bridal beauty package with hair styling, makeup, and accessory setup.",
+    },
+  ],
+  "DJ & Music": [
+    {
+      id: "fallback-dj-1",
+      vendorName: "Beat Masters",
+      packageName: "Wedding DJ Package",
+      experience: "8 Years",
+      city: "Hyderabad",
+      rating: "4.9",
+      price: 18000,
+      description: "Live DJ and lighting services for your reception and sangeet nights.",
+    },
+    {
+      id: "fallback-dj-2",
+      vendorName: "Rhythm Riders",
+      packageName: "Music & MC",
+      experience: "9 Years",
+      city: "Vijayawada",
+      rating: "4.8",
+      price: 17000,
+      description: "DJ service with sound, lighting, and emcee support for seamless events.",
+    },
+  ],
+  Transportation: [
+    {
+      id: "fallback-transport-1",
+      vendorName: "Royal Rides",
+      packageName: "Luxury Car Service",
+      experience: "7 Years",
+      city: "Hyderabad",
+      rating: "4.7",
+      price: 12000,
+      description: "Luxury wedding transportation for bride, groom, and VIP guests.",
+    },
+    {
+      id: "fallback-transport-2",
+      vendorName: "Wedding Wheels",
+      packageName: "Guest Shuttle Service",
+      experience: "6 Years",
+      city: "Vijayawada",
+      rating: "4.6",
+      price: 10000,
+      description: "Guest pick-up and drop-off service with multiple vehicles and drivers.",
+    },
+  ],
+  Mehendi: [
+    {
+      id: "fallback-mehendi-1",
+      vendorName: "Henna Creations",
+      packageName: "Bridal Mehendi",
+      experience: "8 Years",
+      city: "Hyderabad",
+      rating: "4.9",
+      price: 9000,
+      description: "Traditional and contemporary bridal mehendi with floral and glitter accents.",
+    },
+    {
+      id: "fallback-mehendi-2",
+      vendorName: "Mehendi Magic",
+      packageName: "Guest Mehendi Designs",
+      experience: "7 Years",
+      city: "Vijayawada",
+      rating: "4.8",
+      price: 7000,
+      description: "Beautiful mehendi designs for the bride, groom, and guests with fast application.",
+    },
+  ],
+};
+
+const defaultFallbackServices = [
+  ...fallbackServiceSamples.Photography,
+  ...fallbackServiceSamples.Videography,
+  ...fallbackServiceSamples.Catering,
+  ...fallbackServiceSamples.Decoration,
+  ...fallbackServiceSamples["Wedding Venue"],
+  ...fallbackServiceSamples["Makeup Artist"],
+  ...fallbackServiceSamples["DJ & Music"],
+  ...fallbackServiceSamples.Transportation,
+  ...fallbackServiceSamples.Mehendi,
+];
+
+const getFallbackServices = (category) => {
+  if (!category) return defaultFallbackServices;
+  return fallbackServiceSamples[category] || defaultFallbackServices;
+};
 
 const ServiceList = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [vendorDetails, setVendorDetails] = useState({});
   const [filters, setFilters] = useState({
     city: "",
     category: "",
@@ -19,8 +259,12 @@ const ServiceList = () => {
     availableDate: "",
   });
 
+  const isUsingFallback = services.length === 0;
+  const displayedServices = isUsingFallback ? getFallbackServices(filters.category) : services;
+
   const navigate = useNavigate();
-  const { addToCart, isServiceInCart, toggleSaveVendor, isVendorSaved } = useContext(CartContext);
+  const location = useLocation();
+  const { addToCart, isServiceInCart } = useContext(CartContext);
   const quickActions = [
     {
       title: "Browse Services",
@@ -95,8 +339,55 @@ const ServiceList = () => {
   }, [navigate]);
 
   useEffect(() => {
-    loadServices(filters);
-  }, [filters, loadServices]);
+    const params = new URLSearchParams(location.search);
+    const q = params.get("q") || undefined;
+    const categoryParam = params.get("category") || undefined;
+    const initialFilters = {};
+
+    if (q) initialFilters.q = q;
+    if (categoryParam) {
+      initialFilters.category = categoryParam;
+      setFilters((prev) => ({ ...prev, category: categoryParam }));
+    }
+
+    loadServices(initialFilters);
+  }, [loadServices, location.search]);
+
+  useEffect(() => {
+    const pendingVendorIds = services
+      .map((service) => service.vendorId)
+      .filter(Boolean)
+      .filter((vendorId) => !vendorDetails[vendorId]);
+
+    if (!pendingVendorIds.length) return;
+
+    const loadVendorDetails = async () => {
+      try {
+        const results = await Promise.all(
+          pendingVendorIds.map(async (vendorId) => {
+            try {
+              const response = await getVendorById(vendorId);
+              return [vendorId, response?.data || null];
+            } catch (err) {
+              return [vendorId, null];
+            }
+          })
+        );
+
+        setVendorDetails((prev) => {
+          const next = { ...prev };
+          results.forEach(([vendorId, vendor]) => {
+            if (vendor) next[vendorId] = vendor;
+          });
+          return next;
+        });
+      } catch (err) {
+        console.error("Unable to load vendor details", err);
+      }
+    };
+
+    loadVendorDetails();
+  }, [services, vendorDetails]);
 
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
@@ -128,6 +419,8 @@ const ServiceList = () => {
     loadServices({});
   };
 
+  
+
   if (loading) {
     return <Loader />;
   }
@@ -150,92 +443,111 @@ const ServiceList = () => {
   }
 
   const renderServiceCards = () => {
-    if (!services || services.length === 0) {
+    if (!displayedServices || displayedServices.length === 0) {
       return (
-        <div className="row">
-          <div className="col-12">
-            <p>No services available</p>
-          </div>
+        <div className="service-list-empty">
+          <h3>No services match your filters</h3>
+          <p>Try broadening your search criteria or clearing filters to browse all available services.</p>
         </div>
       );
     }
 
     return (
-      <div className="row service-list-results">
-        {services.map((service) => (
-          <div className="col-12 col-md-6" key={service.id}>
-            <div className="service-card">
-              <h3>{service.name}</h3>
-              <p>{service.description}</p>
-              <p>
-                <strong>Category:</strong> {service.category}
-              </p>
-              <p>
-                <strong>City:</strong> {service.city}
-              </p>
-              <p>
-                <strong>Price:</strong> ₹{service.price}
-              </p>
-              <p>
-                <strong>Rating:</strong> {service.rating ?? "N/A"}
-              </p>
-              <div className="service-card-actions">
-                <Link to={`/customer/service/${service.id}`} className="btn btn-primary">
-                  View Details
+      <div className="service-grid">
+        {displayedServices.map((service) => {
+          const vendor = service.vendorId ? vendorDetails[service.vendorId] : null;
+          const vendorName = vendor?.businessName || vendor?.name || service.vendorName || `Vendor ${service.vendorId || ""}`;
+          const packageName = service.name || service.packageName || "Wedding package";
+          const vendorExperience = vendor?.responseTime || service.experience || "Experienced wedding professional";
+          const location = service.city || vendor?.city || "Hyderabad";
+          const ratingText = service.rating ? `⭐ ${service.rating}` : vendor?.rating ? `⭐ ${vendor.rating}` : "⭐ 4.8";
+          const cardTitle = vendorName;
+          const cardSubtitle = `${packageName}`;
+          const profileUrl = service.vendorId ? `/vendor/${service.vendorId}` : "/customer/services";
+
+          return (
+            <article className="service-card profile-card" key={service.id}>
+              <div className="service-card-header">
+                <span className="service-card-photo-icon">📷</span>
+                <div>
+                  <h3>{cardTitle}</h3>
+                  <p className="service-card-subtitle">{cardSubtitle}</p>
+                </div>
+              </div>
+
+              <div className="profile-details">
+                <div className="profile-detail-row">
+                  <span>Name :</span>
+                  <strong>{vendorName}</strong>
+                </div>
+                <div className="profile-detail-row">
+                  <span>Experience :</span>
+                  <strong>{vendorExperience.replace(" wedding photography", "")}</strong>
+                </div>
+                <div className="profile-detail-row">
+                  <span>Location :</span>
+                  <strong>{location}</strong>
+                </div>
+                <div className="profile-detail-row">
+                  <span>Rating :</span>
+                  <strong>{ratingText}</strong>
+                </div>
+                <div className="profile-detail-row">
+                  <span>Price :</span>
+                  <strong>₹{service.price}</strong>
+                </div>
+              </div>
+
+              <div className="service-card-actions profile-actions">
+                <Link to={profileUrl} className="btn btn-primary">
+                  View Profile
                 </Link>
                 <button
+                  type="button"
                   className="btn btn-outline"
                   onClick={() => addToCart(service)}
                   disabled={isServiceInCart(service.id)}
                 >
-                  {isServiceInCart(service.id) ? "Added to Bag" : "Add to Bag"}
+                  {isServiceInCart(service.id) ? "Booked" : "Book Now"}
                 </button>
-                {service.vendorId && (
-                  <button
-                    className={isVendorSaved(service.vendorId) ? "btn btn-primary" : "btn btn-outline"}
-                    onClick={() =>
-                      toggleSaveVendor({
-                        vendorId: service.vendorId,
-                        vendorName: service.vendorName || `Vendor ${service.vendorId}`,
-                      })
-                    }
-                  >
-                    {isVendorSaved(service.vendorId) ? "Saved" : "Save Vendor"}
-                  </button>
-                )}
               </div>
-            </div>
-          </div>
-        ))}
+            </article>
+          );
+        })}
       </div>
     );
   };
 
-  return (
-    <div className="service-list-page page-with-sidebar">
-      <Sidebar
-        title="Quick Actions"
-        links={quickActions.map((a) => ({ label: a.title, description: a.description, to: a.to }))}
-      />
+  const sidebarLinks = quickActions.map((a) => ({
+    label: a.title,
+    description: a.description,
+    to: a.to,
+  }));
 
-      <div className="page-main">
-        <CustomerHeader title="Services" />
-        <section className="dashboard-grid customer-dashboard-grid service-quick-actions">
-          {quickActions.map((action) => (
-            <div className="dashboard-card action-card" key={action.title}>
-              <h3>{action.title}</h3>
-              <p>{action.description}</p>
-              <Link to={action.to} className="btn btn-outline dashboard-card-action">
-                {action.button}
-              </Link>
-            </div>
-          ))}
-        </section>
-      <div className="filter-panel">
+  return (
+    <CustomerPageLayout
+      title="Services"
+      className="service-list-page"
+    >
+      <div className="service-list-main">
+        <div className="service-list-summary">
+          <div>
+            <h2 className="service-list-heading">
+              {filters.category ? `${filters.category} Services` : "Discover wedding services"}
+            </h2>
+            <p className="service-list-description">
+              Browse curated vendor packages to compare pricing, availability, and reviews in one place.
+            </p>
+          </div>
+          <div className="service-list-badge">{displayedServices.length} services available</div>
+        </div>
+
+        <section className="filter-panel">
         <div className="filter-row">
           <div className="filter-field">
-            <label>City</label>
+            <label htmlFor="city">City</label>
             <input
+              id="city"
               name="city"
               value={filters.city}
               onChange={handleFilterChange}
@@ -243,8 +555,9 @@ const ServiceList = () => {
             />
           </div>
           <div className="filter-field">
-            <label>Category</label>
+            <label htmlFor="category">Category</label>
             <input
+              id="category"
               name="category"
               value={filters.category}
               onChange={handleFilterChange}
@@ -252,28 +565,31 @@ const ServiceList = () => {
             />
           </div>
           <div className="filter-field">
-            <label>Min Budget</label>
-              <input
-                type="number"
-                name="minPrice"
-                value={filters.minPrice}
-                onChange={handleFilterChange}
-                placeholder="0"
-              />
-          </div>
-          <div className="filter-field">
-            <label>Max Budget</label>
-              <input
-                type="number"
-                name="maxPrice"
-                value={filters.maxPrice}
-                onChange={handleFilterChange}
-                placeholder="0"
-              />
-          </div>
-          <div className="filter-field">
-            <label>Min Rating</label>
+            <label htmlFor="minPrice">Min Budget</label>
             <input
+              id="minPrice"
+              type="number"
+              name="minPrice"
+              value={filters.minPrice}
+              onChange={handleFilterChange}
+              placeholder="0"
+            />
+          </div>
+          <div className="filter-field">
+            <label htmlFor="maxPrice">Max Budget</label>
+            <input
+              id="maxPrice"
+              type="number"
+              name="maxPrice"
+              value={filters.maxPrice}
+              onChange={handleFilterChange}
+              placeholder="0"
+            />
+          </div>
+          <div className="filter-field">
+            <label htmlFor="minRating">Min Rating</label>
+            <input
+              id="minRating"
               type="number"
               step="0.1"
               min="0"
@@ -285,8 +601,9 @@ const ServiceList = () => {
             />
           </div>
           <div className="filter-field">
-            <label>Available Date</label>
+            <label htmlFor="availableDate">Available Date</label>
             <input
+              id="availableDate"
               type="date"
               name="availableDate"
               value={filters.availableDate}
@@ -294,6 +611,7 @@ const ServiceList = () => {
             />
           </div>
         </div>
+
         <div className="filter-actions">
           <button className="btn btn-primary" onClick={handleSearch}>
             Search
@@ -302,11 +620,11 @@ const ServiceList = () => {
             Clear Filters
           </button>
         </div>
-      </div>
+      </section>
 
-        {renderServiceCards()}
+      <section className="service-results">{renderServiceCards()}</section>
       </div>
-    </div>
+    </CustomerPageLayout>
   );
 };
 

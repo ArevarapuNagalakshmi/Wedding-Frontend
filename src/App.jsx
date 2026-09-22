@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, useLocation } from "react-router-dom";
 
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
@@ -7,8 +7,10 @@ import AppRoutes from "./routes/AppRoutes";
 
 import "./styles/app.css";
 
-const App = () => {
+const AppShell = () => {
   const [normalBg, setNormalBg] = useState(true);
+  const location = useLocation();
+  const isVendorRoute = location.pathname === "/vendor" || location.pathname.startsWith("/vendor/");
 
   useEffect(() => {
     // keep body and main background in sync with toggle state
@@ -32,28 +34,25 @@ const App = () => {
   const toggleBackground = () => setNormalBg((s) => !s);
 
   return (
+    <div className="app-layout">
 
-    <BrowserRouter>
+      {!isVendorRoute && <Navbar onToggleBg={toggleBackground} normalBg={normalBg} />}
 
-      <div className="app-layout">
+      <main className="app-content">
+        <AppRoutes />
+      </main>
 
-        {/* NAVBAR */}
-        <Navbar onToggleBg={toggleBackground} normalBg={normalBg} />
+      <Footer />
 
-        {/* MAIN CONTENT */}
-        <main className="app-content">
-          <AppRoutes />
-        </main>
-
-        {/* FOOTER */}
-        <Footer />
-
-      </div>
-
-    </BrowserRouter>
-
+    </div>
   );
 
 };
+
+const App = () => (
+  <BrowserRouter>
+    <AppShell />
+  </BrowserRouter>
+);
 
 export default App;

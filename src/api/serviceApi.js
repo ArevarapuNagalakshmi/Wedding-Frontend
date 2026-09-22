@@ -5,12 +5,28 @@ export const getAllServices = () => {
   return axiosInstance.get("/services");
 };
 
-export const searchServices = (filters) => {
-  return axiosInstance.get("/packages/search", { params: filters });
+export const searchServices = (filters = {}) => {
+  // Map frontend filter keys to backend search parameter names
+  const params = {};
+
+  if (filters.q) params.name = filters.q;
+  if (filters.name) params.name = filters.name;
+  if (filters.city) params.city = filters.city;
+  if (filters.category) params.category = filters.category;
+  if (filters.minPrice) params.minPrice = filters.minPrice;
+  if (filters.maxPrice) params.maxPrice = filters.maxPrice;
+  if (filters.minRating) params.minRating = filters.minRating;
+  if (filters.availableDate) params.availableDate = filters.availableDate;
+
+  return axiosInstance.get("/packages/search", { params });
 };
 
 export const getServiceById = (serviceId) => {
   return axiosInstance.get(`/services/${serviceId}`);
+};
+
+export const getPackagesByVendor = (vendorId) => {
+  return axiosInstance.get(`/packages/vendor/${vendorId}`);
 };
 
 // VENDOR

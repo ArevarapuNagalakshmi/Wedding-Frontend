@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../../context/CartContext";
 import "../../styles/Dashboard.css";
-import CustomerHeader from "./CustomerHeader";
+import CustomerPageLayout from "./CustomerPageLayout";
 
 const CustomerCart = () => {
   const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
@@ -11,8 +11,10 @@ const CustomerCart = () => {
   const total = cartItems.reduce((sum, item) => sum + Number(item.price || 0), 0);
 
   return (
-    <div className="dashboard-container customer-cart-page">
-      <CustomerHeader title="Your Bag" />
+    <CustomerPageLayout
+      title="Your Bag"
+      className="customer-cart-page"
+    >
       <section className="customer-hero-panel">
         <div className="customer-hero-copy">
           <span className="dashboard-badge">Your Bag</span>
@@ -67,7 +69,7 @@ const CustomerCart = () => {
           </aside>
         </div>
       )}
-    </div>
+    </CustomerPageLayout>
   );
 };
 

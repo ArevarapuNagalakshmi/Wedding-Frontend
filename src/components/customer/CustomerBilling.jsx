@@ -4,7 +4,7 @@ import { bookService } from "../../api/bookingApi";
 import { getServiceById } from "../../api/serviceApi";
 import { CartContext } from "../../context/CartContext";
 import "../../styles/Dashboard.css";
-import CustomerHeader from "./CustomerHeader";
+import CustomerPageLayout from "./CustomerPageLayout";
 
 const CustomerBilling = () => {
   const { serviceId } = useParams();
@@ -82,8 +82,10 @@ const CustomerBilling = () => {
   };
 
   return (
-    <div className="dashboard-container customer-billing-page">
-      <CustomerHeader title="Billing" />
+    <CustomerPageLayout
+      title="Billing"
+      className="customer-billing-page"
+    >
       <section className="customer-hero-panel">
         <div className="customer-hero-copy">
           <span className="dashboard-badge">Billing</span>
@@ -150,7 +152,7 @@ const CustomerBilling = () => {
           </div>
         </aside>
       </div>
-    </div>
+    </CustomerPageLayout>
   );
 };
 

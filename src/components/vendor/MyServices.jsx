@@ -3,8 +3,6 @@ import { getMyServices, deleteService } from "../../api/serviceApi";
 import { getVendorProfile } from "../../api/vendorApi";
 import { Link } from "react-router-dom";
 import Loader from "../common/Loader";
-import VendorLayout from "./VendorLayout";
-import VendorHeader from "./VendorHeader";
 
 const MyServices = () => {
   const [services, setServices] = useState([]);
@@ -87,29 +85,25 @@ const MyServices = () => {
 
   if (!vendorApproved) {
     return (
-      <VendorLayout vendor={vendor}>
-        <VendorHeader businessInitials={(vendor?.businessName || "VD").slice(0, 2).toUpperCase()} />
-        <section className="vendor-page-section vendor-pending-panel">
-          <div className="vendor-page-header">
-            <div>
-              <h2>Vendor Approval Required</h2>
-              <p>
-                Your account is currently pending admin approval. You will be able
-                to manage services once your vendor account is approved.
-              </p>
-            </div>
+      <section className="vendor-page-section vendor-pending-panel">
+        <div className="vendor-page-header">
+          <div>
+            <h2>Vendor Approval Required</h2>
+            <p>
+              Your account is currently pending admin approval. You will be able
+              to manage services once your vendor account is approved.
+            </p>
           </div>
-          <div className="vendor-page-alert">
-            Please wait for the administrator to approve your vendor account.
-          </div>
-        </section>
-      </VendorLayout>
+        </div>
+        <div className="vendor-page-alert">
+          Please wait for the administrator to approve your vendor account.
+        </div>
+      </section>
     );
   }
 
   return (
-    <VendorLayout vendor={vendor}>
-      <VendorHeader businessInitials={(vendor?.businessName || "VD").slice(0, 2).toUpperCase()} />
+    <>
       <section className="vendor-page-section">
         <div className="vendor-page-header">
           <div>
@@ -174,7 +168,7 @@ const MyServices = () => {
           </div>
         )}
       </section>
-    </VendorLayout>
+    </>
   );
 };
 

@@ -21,7 +21,7 @@ const CustomerHeader = ({ title = "", showLogout = false }) => {
       <div className="customer-header-left">
         <h2 className="customer-header-title">{title}</h2>
         <Link to="/customer" className="customer-header-subtle">
-          Dashboard
+          Home
         </Link>
       </div>
 

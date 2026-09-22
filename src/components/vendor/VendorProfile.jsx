@@ -3,8 +3,6 @@ import { getVendorProfile, updateVendorProfile, createVendorProfile, uploadPortf
 import { getBlockedDates } from "../../api/availabilityApi";
 import Loader from "../common/Loader";
 import "../../styles/Dashboard.css";
-import VendorHeader from "./VendorHeader";
-import VendorLayout from "./VendorLayout";
 
 const defaultVendor = {
   businessName: "",
@@ -218,9 +216,30 @@ const VendorProfile = () => {
 
   if (loading) return <Loader />;
 
+  const latitude = Number(vendor?.latitude);
+  const longitude = Number(vendor?.longitude);
+  const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude);
+  const mapLocation = hasCoordinates
+    ? `${latitude},${longitude}`
+    : [vendor?.address, vendor?.city].filter(Boolean).join(", ");
+  const mapUrl = mapLocation
+    ? `https://maps.google.com/maps?q=${encodeURIComponent(mapLocation)}&z=14&output=embed`
+    : "";
+  const completionFields = [
+    vendor?.businessName,
+    vendor?.category,
+    vendor?.description,
+    vendor?.city,
+    vendor?.address,
+    vendor?.pricingRange,
+    vendor?.responseTime,
+  ];
+  const completionPercent = Math.round(
+    (completionFields.filter(Boolean).length / completionFields.length) * 100
+  );
+
   return (
-    <VendorLayout vendor={vendor}>
-      <VendorHeader businessInitials={(vendor && vendor.businessName && vendor.businessName.slice(0,2).toUpperCase()) || "VD"} />
+    <>
       <section className="vendor-main-card">
         <div className="vendor-main-card-inner">
           <div className="main-card-left">
@@ -244,6 +263,15 @@ const VendorProfile = () => {
             <div className="meta-box">
               <span>Location</span>
               <strong>{vendor?.city || vendor?.address || "Not set"}</strong>
+            </div>
+            <div className="profile-completion">
+              <div className="profile-completion-label">
+                <span>Profile completeness</span>
+                <strong>{completionPercent}%</strong>
+              </div>
+              <div className="profile-completion-track" aria-label={`Profile ${completionPercent}% complete`}>
+                <span style={{ width: `${completionPercent}%` }} />
+              </div>
             </div>
           </aside>
         </div>
@@ -287,7 +315,47 @@ const VendorProfile = () => {
         )}
       </section>
 
+      <section className="vendor-profile-map-card">
+        <div className="vendor-profile-map-heading">
+          <div>
+            <span className="vendor-home-kicker">Your service area</span>
+            <h2>Location on map</h2>
+            <p>
+              Couples can use this location to understand where your wedding
+              services are available.
+            </p>
+          </div>
+          <span className="vendor-profile-location-label">
+            {vendor?.city || vendor?.address || "Location not set"}
+          </span>
+        </div>
+
+        {mapUrl ? (
+          <div className="vendor-profile-map-frame">
+            <iframe
+              title="Vendor service location"
+              src={mapUrl}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        ) : (
+          <div className="vendor-profile-map-empty">
+            <strong>Add your address or city to show your service area.</strong>
+            <span>Your saved location will appear here after you update the profile.</span>
+          </div>
+        )}
+      </section>
+
       <section className="vendor-form-panel">
+        <div className="vendor-section-heading">
+          <div>
+            <span className="vendor-home-kicker">Business details</span>
+            <h2>Shape your public profile</h2>
+            <p>Give couples the practical details they need before they contact or book you.</p>
+          </div>
+          <span className="vendor-section-count">{completionPercent}% complete</span>
+        </div>
         <div className="vendor-form">
           <div className="vendor-form-group">
             <label className="vendor-form-label">Business Name</label>
@@ -373,7 +441,11 @@ const VendorProfile = () => {
 
 
           <div className="vendor-form-group">
-            <label className="vendor-form-label">Upload Portfolio Images</label>
+            <div className="vendor-form-section-label">
+              <span className="vendor-home-kicker">Portfolio</span>
+              <strong>Upload portfolio images</strong>
+              <small>Show your strongest work first. JPG, PNG, and other image files are supported.</small>
+            </div>
             <input
               type="file"
               accept="image/*"
@@ -412,7 +484,11 @@ const VendorProfile = () => {
           </div>
 
           <div className="vendor-form-group">
-            <label className="vendor-form-label">Upload Portfolio Videos</label>
+            <div className="vendor-form-section-label">
+              <span className="vendor-home-kicker">Portfolio</span>
+              <strong>Upload portfolio videos</strong>
+              <small>Use short videos to help couples understand your style and experience.</small>
+            </div>
             <input
               type="file"
               accept="video/*"
@@ -492,7 +568,7 @@ const VendorProfile = () => {
           </div>
         )}
       </section>
-      </VendorLayout>
+    </>
   );
 };
 

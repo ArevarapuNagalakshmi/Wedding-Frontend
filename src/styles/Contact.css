@@ -8,7 +8,9 @@
 
 .contact-wrapper {
   min-height: calc(100vh - 70px);
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background:
+    repeating-linear-gradient(135deg, rgba(15, 118, 110, 0.035) 0 1px, transparent 1px 22px),
+    linear-gradient(135deg, #fffaf3 0%, #f4fbfa 65%, #e5f1ef 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,7 +33,7 @@
 .contact-info-section {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 30px;
 }
 
 .info-header h2 {
@@ -43,9 +45,40 @@
   letter-spacing: -0.5px;
 }
 
+.contact-kicker {
+  display: inline-block;
+  color: #b9793d;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.info-header h1 {
+  max-width: 620px;
+  margin: 12px 0 16px;
+  color: #123b4a;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.contact-heart-mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  margin-top: 22px;
+  place-items: center;
+  border: 1px solid rgba(193, 133, 68, 0.24);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #bd7c3c;
+}
+
 .info-header p {
   font-size: 16px;
-  color: #666;
+  color: #55707d;
   line-height: 1.6;
   margin: 0;
 }
@@ -58,9 +91,10 @@
 
 .info-card {
   background: white;
-  padding: 28px;
+  padding: 24px;
   border-radius: 16px;
-  border: 1px solid #e8ecf1;
+  border: 1px solid rgba(15, 92, 112, 0.12);
+  box-shadow: 0 12px 26px rgba(15, 92, 112, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -82,7 +116,7 @@
 .info-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  border-color: rgb(247, 134, 24);
+  border-color: #d19a5c;
 }
 
 .info-card:hover::before {
@@ -90,15 +124,21 @@
 }
 
 .info-icon {
-  font-size: 32px;
-  margin-bottom: 12px;
-  display: inline-block;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 16px;
+  place-items: center;
+  border-radius: 12px;
+  background: #e6f5f2;
+  color: #0f766e;
+  font-size: 17px;
 }
 
 .info-card h4 {
   font-size: 18px;
   font-weight: 700;
-  color: rgb(6, 115, 130);
+  color: #123b4a;
   margin: 0 0 8px 0;
 }
 
@@ -115,11 +155,30 @@
 
 .contact-form-section {
   background: white;
-  padding: 50px;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e8ecf1;
+  padding: 38px;
+  border-radius: 22px;
+  box-shadow: 0 24px 60px rgba(15, 92, 112, 0.13);
+  border: 1px solid rgba(15, 92, 112, 0.12);
   animation: slideInUp 0.6s ease-out;
+}
+
+.contact-form-heading {
+  margin-bottom: 26px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(15, 92, 112, 0.12);
+}
+
+.contact-form-heading h2 {
+  margin: 8px 0;
+  color: #123b4a;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+}
+
+.contact-form-heading p {
+  margin: 0;
+  color: #55707d;
+  line-height: 1.55;
 }
 
 @keyframes slideInUp {
@@ -147,7 +206,7 @@
 .form-group label {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: #315969;
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -156,14 +215,14 @@
 .form-group input,
 .form-group textarea {
   padding: 14px 16px;
-  border: 2px solid #e8ecf1;
+  border: 1px solid #c9dfe7;
   border-radius: 12px;
   font-size: 15px;
   font-family: inherit;
   outline: none;
   transition: all 0.3s ease;
-  background: #f8f9fb;
-  color: #333;
+  background: #f8fbfc;
+  color: #173b4a;
 }
 
 .form-group input::placeholder,
@@ -174,8 +233,8 @@
 .form-group input:focus,
 .form-group textarea:focus {
   background: white;
-  border-color: rgb(247, 134, 24);
-  box-shadow: 0 0 0 4px rgba(247, 134, 24, 0.1);
+  border-color: #1da3b0;
+  box-shadow: 0 0 0 4px rgba(29, 163, 176, 0.12);
 }
 
 .form-group input.error,
@@ -241,7 +300,7 @@
 
 .send-btn {
   padding: 16px 24px;
-  background: linear-gradient(135deg, rgb(247, 134, 24) 0%, #fdb750 100%);
+  background: linear-gradient(135deg, #0f766e 0%, #0b6073 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -275,7 +334,7 @@
 
 .send-btn:hover:not(:disabled) {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(247, 134, 24, 0.4);
+  box-shadow: 0 12px 30px rgba(15, 92, 112, 0.28);
 }
 
 .send-btn:active:not(:disabled) {

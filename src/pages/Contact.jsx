@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaClock, FaEnvelope, FaHeart, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 import "../styles/Contact.css";
 
 const Contact = () => {
@@ -54,31 +55,33 @@ const Contact = () => {
         {/* Left Section - Info */}
         <div className="contact-info-section">
           <div className="info-header">
-            <h2>Get In Touch</h2>
-            <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+            <span className="contact-kicker">Plan together</span>
+            <h1>Let’s make your next conversation count.</h1>
+            <p>Questions about a service, a booking, or joining our wedding community? Our team is here to help.</p>
+            <div className="contact-heart-mark" aria-hidden="true"><FaHeart /></div>
           </div>
 
           <div className="contact-info-grid">
             <div className="info-card">
-              <div className="info-icon">📍</div>
+              <div className="info-icon"><FaMapMarkerAlt /></div>
               <h4>Address</h4>
               <p>123 Wedding Street, Event City, EC 12345</p>
             </div>
 
             <div className="info-card">
-              <div className="info-icon">📞</div>
+              <div className="info-icon"><FaPhone /></div>
               <h4>Phone</h4>
               <p>+1 (555) 123-4567</p>
             </div>
 
             <div className="info-card">
-              <div className="info-icon">✉️</div>
+              <div className="info-icon"><FaEnvelope /></div>
               <h4>Email</h4>
               <p>hello@weddingservices.com</p>
             </div>
 
             <div className="info-card">
-              <div className="info-icon">⏰</div>
+              <div className="info-icon"><FaClock /></div>
               <h4>Hours</h4>
               <p>Mon - Fri: 9AM - 6PM</p>
             </div>
@@ -87,6 +90,11 @@ const Contact = () => {
 
         {/* Right Section - Form */}
         <div className="contact-form-section">
+          <div className="contact-form-heading">
+            <span className="contact-kicker">Send a note</span>
+            <h2>How can we help?</h2>
+            <p>Share a few details and we’ll route your message to the right person.</p>
+          </div>
           <form onSubmit={handleSubmit} className="contact-form">
             {success && <div className="contact-success">{success}</div>}
 

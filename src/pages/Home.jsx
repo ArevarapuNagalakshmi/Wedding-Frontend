@@ -1,10 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import {
-  FaEnvelope,
-  FaUsers,
-  FaLock,
-} from "react-icons/fa";
+import { FaEnvelope, FaUsers, FaLock, FaHeart, FaArrowRight } from "react-icons/fa";
+import { AuthContext } from "../context/AuthContext";
 
 import "../styles/Home.css";
 
@@ -105,9 +102,14 @@ const moreServices = [
 ];
 
 const Home = () => {
+  const { token, role } = useContext(AuthContext);
+  const isCustomer = token && role === "CUSTOMER";
+  const guestDestination = "/login";
+  const serviceLink = isCustomer ? "/customer/services" : guestDestination;
+  const ctaLink = isCustomer ? "/customer" : "/register";
+  const ctaLabel = isCustomer ? "Go to Dashboard" : "Create Account";
 
   return (
-
     <div className="home-wrapper">
 
       {/* HERO SECTION */}
@@ -115,8 +117,10 @@ const Home = () => {
 
         <div className="hero-content">
 
+          <span className="hero-kicker"><FaHeart /> Plan E Weddings</span>
+
           <h1>
-            Plan your wedding with trusted vendors in one place.
+            The beautiful beginning to your forever.
           </h1>
 
           <p>
@@ -125,15 +129,32 @@ const Home = () => {
           </p>
 
           <div className="hero-buttons">
+            {isCustomer ? (
+              <>
+                <Link to="/customer" className="btn-primary btn-create-account-hero">
+                  Go to Dashboard
+                </Link>
+                <Link to="/customer/services" className="btn-secondary">
+                  Browse Services
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="btn-secondary">
+                  Login
+                </Link>
 
-            <Link to="/login" className="btn-secondary">
-              Login
-            </Link>
+                <Link to="/register" className="btn-primary btn-create-account-hero">
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
 
-            <Link to="/register" className="btn-primary btn-create-account-hero">
-              Register
-            </Link>
-
+          <div className="hero-trust-row">
+            <span>Verified professionals</span>
+            <span>Secure bookings</span>
+            <span>One calm workspace</span>
           </div>
 
         </div>
@@ -170,11 +191,18 @@ const Home = () => {
 
       <section className="services-section">
 
-        <h2>Our Popular Services</h2>
+        <span className="section-kicker">Find your people</span>
+        <h2>Services that shape the day.</h2>
+        <p className="section-intro">From the first photograph to the final dance, discover trusted specialists for every meaningful detail.</p>
 
         <div className="services-grid">
           {popularServices.map((service) => (
-            <div className="service-card-flip" key={service.title}>
+            <Link
+              to={`${serviceLink}?category=${encodeURIComponent(service.title)}`}
+              key={service.title}
+              className="service-card-flip"
+              aria-label={`Browse ${service.title}`}
+            >
               <div className="service-card-inner">
                 <div className="service-card-front">
                   <div className="service-image-wrapper">
@@ -196,20 +224,24 @@ const Home = () => {
                       <span className="count">{service.count}</span>
                     </div>
                     <p className="back-text">{service.backText}</p>
-                    <Link to="/register" className="btn-explore">Explore Now</Link>
+                    <div className="btn-explore">Explore Now <FaArrowRight /></div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
-
       </section>
 
       <section className="more-services-section">
         <div className="more-services-grid">
           {moreServices.map((service) => (
-            <div className="service-card-flip" key={service.title}>
+            <Link
+              to={`${serviceLink}?category=${encodeURIComponent(service.title)}`}
+              key={service.title}
+              className="service-card-flip"
+              aria-label={`Browse ${service.title}`}
+            >
               <div className="service-card-inner">
                 <div className="service-card-front">
                   <div className="service-image-wrapper">
@@ -231,11 +263,11 @@ const Home = () => {
                       <span className="count">{service.count}</span>
                     </div>
                     <p className="back-text">{service.backText}</p>
-                    <Link to="/register" className="btn-explore">Explore Now</Link>
+                    <div className="btn-explore">Explore Now <FaArrowRight /></div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -253,16 +285,14 @@ const Home = () => {
             </p>
           </div>
 
-          <Link to="/register" className="btn-primary final-cta-button">
-            Create Account
+          <Link to={ctaLink} className="btn-primary final-cta-button">
+            {ctaLabel}
           </Link>
         </div>
       </section>
 
     </div>
-
   );
-
 };
 
 export default Home;

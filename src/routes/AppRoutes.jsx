@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 
 // Public Pages
-import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Unauthorized from "../pages/Unauthorized";
@@ -11,10 +10,14 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 import ForgotPassword from "../pages/ForgotPassword";
 import VendorProfilePage from "../pages/VendorProfilePage";
+import HomeOrProfile from "../pages/HomeOrProfile";
+import PlanningTips from "../pages/PlanningTips";
 
 // Dashboards
 import AdminDashboard from "../components/admin/AdminDashboard";
-import VendorDashboard from "../components/vendor/VendorDashboardNew";
+import VendorLayout from "../components/vendor/VendorLayout";
+import VendorHome from "../components/vendor/VendorHome";
+import VendorDashboardPage from "../components/vendor/VendorDashboard";
 import VendorProfile from "../components/vendor/VendorProfile";
 import MyServices from "../components/vendor/MyServices";
 import AddService from "../components/vendor/AddService";
@@ -37,7 +40,7 @@ const AppRoutes = () => {
 
       {/* ================= PUBLIC ROUTES ================= */}
 
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<HomeOrProfile />} />
 
       <Route path="/login" element={<Login />} />
 
@@ -52,6 +55,8 @@ const AppRoutes = () => {
       <Route path="/unauthorized" element={<Unauthorized />} />
 
       <Route path="/vendor/:vendorId" element={<VendorProfilePage />} />
+
+      <Route path="/planning-tips" element={<PlanningTips />} />
 
 
       {/* ================= ADMIN ================= */}
@@ -72,46 +77,17 @@ const AppRoutes = () => {
         path="/vendor"
         element={
           <ProtectedRoute allowedRoles={["VENDOR"]}>
-            <VendorDashboard />
+            <VendorLayout />
           </ProtectedRoute>
         }
-      />
-
-      <Route
-        path="/vendor/profile"
-        element={
-          <ProtectedRoute allowedRoles={["VENDOR"]}>
-            <VendorProfile />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/vendor/services"
-        element={
-          <ProtectedRoute allowedRoles={["VENDOR"]}>
-            <MyServices />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/vendor/add-service"
-        element={
-          <ProtectedRoute allowedRoles={["VENDOR"]}>
-            <AddService />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/vendor/edit-service/:id"
-        element={
-          <ProtectedRoute allowedRoles={["VENDOR"]}>
-            <EditService />
-          </ProtectedRoute>
-        }
-      />
+      >
+        <Route index element={<VendorHome />} />
+        <Route path="dashboard" element={<VendorDashboardPage />} />
+        <Route path="profile" element={<VendorProfile />} />
+        <Route path="services" element={<MyServices />} />
+        <Route path="add-service" element={<AddService />} />
+        <Route path="edit-service/:id" element={<EditService />} />
+      </Route>
 
       {/* ================= CUSTOMER ================= */}
 

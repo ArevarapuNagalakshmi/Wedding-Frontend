@@ -3,7 +3,6 @@ import { getServiceById, updateService } from "../../api/serviceApi";
 import { getVendorProfile } from "../../api/vendorApi";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../common/Loader";
-import VendorLayout from "./VendorLayout";
 
 const EditService = () => {
   const { id } = useParams();
@@ -87,30 +86,27 @@ const EditService = () => {
 
   if (!vendorApproved) {
     return (
-      <VendorLayout vendor={vendor}>
-        <div className="vendor-page-section vendor-pending-panel">
-          <div className="vendor-page-header">
-            <div>
-              <h2>Vendor Approval Required</h2>
-              <p>
-                Your account must be approved by admin before you can update
-                wedding services.
-              </p>
-            </div>
-          </div>
-          <div className="vendor-page-alert">
-            Please wait for admin approval or contact support if you think this
-            is an error.
+      <div className="vendor-page-section vendor-pending-panel">
+        <div className="vendor-page-header">
+          <div>
+            <h2>Vendor Approval Required</h2>
+            <p>
+              Your account must be approved by admin before you can update
+              wedding services.
+            </p>
           </div>
         </div>
-      </VendorLayout>
+        <div className="vendor-page-alert">
+          Please wait for admin approval or contact support if you think this
+          is an error.
+        </div>
+      </div>
     );
   }
 
   return (
-    <VendorLayout vendor={vendor}>
-        <div className="vendor-page-section vendor-form-panel">
-          <div className="vendor-page-header">
+    <div className="vendor-page-section vendor-form-panel">
+      <div className="vendor-page-header">
         <div>
           <h2>Edit Service</h2>
           <p>Update your wedding service details and pricing to keep your profile current.</p>
@@ -168,7 +164,6 @@ const EditService = () => {
         </div>
       </form>
     </div>
-  </VendorLayout>
   );
 };
 

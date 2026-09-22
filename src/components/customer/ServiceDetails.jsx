@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getServiceById } from "../../api/serviceApi";
 import { CartContext } from "../../context/CartContext";
 import "../../styles/Dashboard.css";
-import CustomerHeader from "./CustomerHeader";
+import CustomerPageLayout from "./CustomerPageLayout";
 
 const ServiceDetails = () => {
   const { serviceId } = useParams();
@@ -72,8 +72,10 @@ const ServiceDetails = () => {
   const inBag = isServiceInCart(service.id);
 
   return (
-    <div className="service-detail-page">
-      <CustomerHeader title={service ? service.name : "Service Details"} />
+    <CustomerPageLayout
+      title={service ? service.name : "Service Details"}
+      className="service-detail-page"
+    >
       <div className="service-detail-card">
         <h2>{service.name}</h2>
         <p>{service.description}</p>
@@ -86,6 +88,11 @@ const ServiceDetails = () => {
           <button className="btn btn-primary" onClick={bookNow}>
             Book Now
           </button>
+          {vendorId && (
+            <button className="btn btn-outline" onClick={() => navigate(`/vendor/${vendorId}`)}>
+              View Vendor Profile
+            </button>
+          )}
           <button className="btn btn-outline" onClick={handleAddToBag} disabled={inBag}>
             {inBag ? "Added to Bag" : "Add to Bag"}
           </button>
@@ -117,7 +124,7 @@ const ServiceDetails = () => {
           </div>
         </div>
       </div>
-    </div>
+    </CustomerPageLayout>
   );
 };
 

@@ -5,7 +5,9 @@ import {
   FaIdCard,
   FaLock,
   FaEye,
-  FaEyeSlash
+  FaEyeSlash,
+  FaHeart,
+  FaGlassCheers
 } from "react-icons/fa";
 
 import {
@@ -21,6 +23,7 @@ import {
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/Register.css";
+import { getErrorMessage } from "../utils/errorUtils";
 
 const Register = () => {
 
@@ -34,7 +37,8 @@ const Register = () => {
     role: "",
     aadhaarNumber: "",
     mobileNumber: "",
-    password: ""
+    password: "",
+    confirmPassword: ""
   });
 
   const [emailOtp, setEmailOtp] = useState("");
@@ -44,6 +48,7 @@ const Register = () => {
   const [aadhaarVerified, setAadhaarVerified] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -64,7 +69,9 @@ const Register = () => {
   const canVerifyEmail = emailOtpSent && emailOtp && !emailVerified;
   const canSendAadhaarOtp = formData.aadhaarNumber && isAadhaarValid && formData.mobileNumber && isMobileValid && formData.firstName && formData.lastName && !aadhaarVerified && aadhaarOtpTimer === 0;
   const canVerifyAadhaar = aadhaarOtpSent && aadhaarOtp && !aadhaarVerified;
-  const canSubmit = emailVerified && aadhaarVerified && formData.firstName && formData.lastName && formData.role && formData.password.length >= 6;
+  const passwordsMatch = formData.password.length > 0 && formData.password === formData.confirmPassword;
+  const canSubmit = emailVerified && aadhaarVerified && formData.firstName && formData.lastName && formData.role && formData.password.length >= 8 && passwordsMatch;
+  const passwordStrength = formData.password.length >= 12 ? "Strong" : formData.password.length >= 8 ? "Good" : "Needs 8+ characters";
 
   const emailHint = !formData.email
     ? "Enter your email address to receive a verification code."
@@ -171,13 +178,7 @@ const Register = () => {
       setEmailOtpTimer(300);
       setSuccess("OTP sent to email.");
     } catch (err) {
-      const msg =
-        typeof err.response?.data === "string"
-          ? err.response.data
-          : err.response?.data?.message ||
-            err.response?.data?.error ||
-            "Failed to send OTP.";
-      setError(msg);
+      setError(getErrorMessage(err) || "Failed to send OTP.");
       setSuccess("");
     } finally {
       setEmailSendLoading(false);
@@ -250,15 +251,7 @@ const Register = () => {
       setError("");
 
     } catch (err) {
-
-      const msg =
-        typeof err.response?.data === "string"
-          ? err.response.data
-          : err.response?.data?.message ||
-            err.response?.data?.error ||
-            "Invalid Aadhaar";
-
-      setError(msg);
+      setError(getErrorMessage(err) || "Invalid Aadhaar");
       setSuccess("");
     } finally {
       setAadhaarSendLoading(false);
@@ -282,15 +275,7 @@ const Register = () => {
       setError("");
 
     } catch (err) {
-
-      const msg =
-        typeof err.response?.data === "string"
-          ? err.response.data
-          : err.response?.data?.message ||
-            err.response?.data?.error ||
-            "Invalid OTP";
-
-      setError(msg);
+      setError(getErrorMessage(err) || "Invalid OTP");
       setSuccess("");
     } finally {
       setAadhaarVerifyLoading(false);
@@ -309,8 +294,14 @@ const Register = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      setSuccess("");
+      return;
+    }
+
+    if (!passwordsMatch) {
+      setError("Passwords do not match.");
       setSuccess("");
       return;
     }
@@ -322,49 +313,65 @@ const Register = () => {
     }
 
     try {
-
-      await register(formData);
+      const { confirmPassword, ...registrationData } = formData;
+      await register(registrationData);
 
       const res = await login({
         emailOrPhone: formData.email,
         password: formData.password
       });
 
-      const normalizedRole = res.data.role.startsWith("ROLE_")
-        ? res.data.role.replace("ROLE_", "")
-        : res.data.role;
+      const normalizedRole = res.data.role
+        ? res.data.role.toUpperCase().replace(/^ROLE_/, "")
+        : "";
 
-      contextLogin(res.data.token, normalizedRole);
+      contextLogin(
+        res.data.token,
+        normalizedRole,
+        `${formData.firstName} ${formData.lastName}`
+      );
 
       navigate(
         normalizedRole === "VENDOR"
           ? "/vendor"
+          : normalizedRole === "ADMIN"
+          ? "/admin"
           : "/customer"
       );
 
     } catch (err) {
-
       console.log("REGISTER ERROR:", err.response);
-
-      const msg =
-        typeof err.response?.data === "string"
-          ? err.response.data
-          : err.response?.data?.message ||
-            err.response?.data?.error ||
-            "Registration failed";
-
-      setError(msg);
+      setError(getErrorMessage(err) || "Registration failed");
       setSuccess("");
     }
   };
 
   return (
     <div className="register-wrapper">
+      <aside className="register-intro" aria-label="Wedding platform introduction">
+        <span className="register-intro-kicker">Plan E Weddings</span>
+        <div className="register-intro-mark" aria-hidden="true">
+          <FaHeart />
+        </div>
+        <h1>Make room for the moments that matter.</h1>
+        <p>Join a thoughtful wedding network where couples discover trusted services and vendors build lasting celebrations.</p>
+        <div className="register-intro-list">
+          <div><strong>01</strong><span>Verify once, plan with confidence.</span></div>
+          <div><strong>02</strong><span>Showcase your wedding expertise.</span></div>
+          <div><strong>03</strong><span>Turn beautiful plans into real events.</span></div>
+        </div>
+      </aside>
       <div className="register-card">
 
         <div className="register-header">
+          <div className="wedding-theme-mark" aria-hidden="true">
+            <FaHeart />
+            <span />
+            <FaGlassCheers />
+          </div>
+          <span className="wedding-theme-kicker">Your celebration starts here</span>
           <h2>Secure Wedding Service Sign Up</h2>
-          <p>Professional onboarding for customers and vendors with trusted identity verification, instant OTP checks, and seamless booking readiness.</p>
+          <p>Connect with trusted wedding professionals, or build a service presence couples will remember.</p>
           <div className="register-summary">
             <span>Fast verification</span>
             <span>Secure identity</span>
@@ -384,6 +391,10 @@ const Register = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="register-progress" aria-label={`Registration step ${currentStep} of 3`}>
+          <span style={{ width: `${(currentStep / 3) * 100}%` }} />
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -583,6 +594,35 @@ const Register = () => {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
+            <div className={`password-strength ${formData.password.length >= 8 ? "ready" : ""}`}>
+              <span>Password strength</span>
+              <strong>{passwordStrength}</strong>
+            </div>
+          </div>
+
+          <div className="form-field password-field">
+            <label>Confirm Password</label>
+            <div className="input-group password-group">
+              <FaLock className="input-icon" />
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Re-enter your password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                autoComplete="new-password"
+                aria-invalid={formData.confirmPassword.length > 0 && !passwordsMatch}
+                required
+              />
+              <span className="password-toggle" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
+            {formData.confirmPassword.length > 0 && (
+              <div className={`field-hint ${passwordsMatch ? "password-match" : "password-mismatch"}`}>
+                {passwordsMatch ? "Passwords match." : "Passwords do not match yet."}
+              </div>
+            )}
           </div>
 
           <button type="submit" className="btn-primary" disabled={!canSubmit}>
@@ -591,7 +631,7 @@ const Register = () => {
 
           {!canSubmit && (
             <div className="auth-hint">
-              Finish email and Aadhaar verification, choose your account type, and set a secure password.
+              Finish email and Aadhaar verification, choose your account type, and confirm a secure password.
             </div>
           )}
         </form>

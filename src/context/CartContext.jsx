@@ -26,6 +26,10 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem(SAVED_VENDORS_STORAGE_KEY, JSON.stringify(savedVendors));
   }, [savedVendors]);
 
+  const getVendorId = (vendor) => vendor?.vendorId || vendor?.id || vendor?.vendor?.id || vendor?._id || "";
+  const getVendorName = (vendor, id) =>
+    vendor?.vendorName || vendor?.name || vendor?.vendor?.name || `Vendor ${id}`;
+
   const addToCart = (service) => {
     if (!service?.id) return;
 
@@ -34,15 +38,17 @@ export const CartProvider = ({ children }) => {
         return current;
       }
 
+      const vendorId = getVendorId(service);
+      const vendorName = getVendorName(service, vendorId || "");
+
       return [
         ...current,
         {
           id: service.id,
           name: service.name || service.title || "Service",
           price: service.price || 0,
-          vendorId: service.vendorId || service.vendor?.id,
-          vendorName:
-            service.vendor?.name || service.vendorName || `Vendor ${service.vendorId || service.vendor?.id || ""}`,
+          vendorId,
+          vendorName,
           description: service.description || "",
           category: service.category || "",
           city: service.city || "",
@@ -60,19 +66,22 @@ export const CartProvider = ({ children }) => {
   };
 
   const toggleSaveVendor = (vendor) => {
-    if (!vendor?.vendorId) return;
+    const vendorId = getVendorId(vendor);
+    if (!vendorId) return;
+
+    const vendorName = getVendorName(vendor, vendorId);
 
     setSavedVendors((current) => {
-      const existing = current.find((item) => item.vendorId === vendor.vendorId);
+      const existing = current.find((item) => item.vendorId === vendorId);
       if (existing) {
-        return current.filter((item) => item.vendorId !== vendor.vendorId);
+        return current.filter((item) => item.vendorId !== vendorId);
       }
 
       return [
         ...current,
         {
-          vendorId: vendor.vendorId,
-          vendorName: vendor.vendorName || `Vendor ${vendor.vendorId}`,
+          vendorId,
+          vendorName,
         },
       ];
     });
